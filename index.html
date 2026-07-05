@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: black;
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        .portfolio-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: clamp(3rem, 12vw, 8rem);
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            pointer-events: none;
+            user-select: none;
+            animation: fadeBlurIn 2.2s ease forwards;
+        }
+        @keyframes fadeBlurIn {
+            0% {
+                opacity: 0;
+                filter: blur(16px);
+                transform: translate(-50%, -50%) scale(0.96);
+            }
+            60% {
+                opacity: 0.8;
+                filter: blur(4px);
+            }
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="portfolio-text">portfolio</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H;
+
+        const spots = [];
+        const SPOT_COUNT = 12;
+
+        function createSpot() {
+            return {
+                x: Math.random() * W,
+                y: Math.random() * H,
+                baseRadius: 30 + Math.random() * 150,
+                phase: Math.random() * Math.PI * 2,
+                pulseSpeed: 0.5 + Math.random() * 1.2,
+                pulseAmp: 0.15 + Math.random() * 0.3,
+                vx: (Math.random() - 0.5) * 0.6,
+                vy: (Math.random() - 0.5) * 0.6,
+                driftAngle: Math.random() * Math.PI * 2,
+                driftSpeed: 0.2 + Math.random() * 0.3,
+                alpha: 0.5 + Math.random() * 0.5,
+            };
+        }
+
+        function initSpots() {
+            spots.length = 0;
+            for (let i = 0; i < SPOT_COUNT; i++) {
+                spots.push(createSpot());
+            }
+        }
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            initSpots();
+        }
+
+        window.addEventListener('resize', resize);
+
+        let time = 0;
+
+        function draw() {
+            time += 0.016;
+            const dt = 0.016;
+
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, W, H);
+
+            for (const spot of spots) {
+                spot.x += spot.vx * dt * 60;
+                spot.y += spot.vy * dt * 60;
+
+                if (spot.x < 0) { spot.x = 0;
+                    spot.vx = Math.abs(spot.vx); }
+                if (spot.x > W) { spot.x = W;
+                    spot.vx = -Math.abs(spot.vx); }
+                if (spot.y < 0) { spot.y = 0;
+                    spot.vy = Math.abs(spot.vy); }
+                if (spot.y > H) { spot.y = H;
+                    spot.vy = -Math.abs(spot.vy); }
+
+                spot.driftAngle += spot.driftSpeed * dt * 0.1;
+                spot.vx += Math.cos(spot.driftAngle) * 0.02 * dt * 30;
+                spot.vy += Math.sin(spot.driftAngle) * 0.02 * dt * 30;
+                const maxSpeed = 1.5;
+                const spd = Math.hypot(spot.vx, spot.vy);
+                if (spd > maxSpeed) {
+                    spot.vx = (spot.vx / spd) * maxSpeed;
+                    spot.vy = (spot.vy / spd) * maxSpeed;
+                }
+
+                const pulse = 1 + spot.pulseAmp * Math.sin(time * spot.pulseSpeed + spot.phase);
+                const radius = spot.baseRadius * pulse;
+
+                const grad = ctx.createRadialGradient(
+                    spot.x, spot.y, 0,
+                    spot.x, spot.y, radius
+                );
+                grad.addColorStop(0, `rgba(255, 255, 255, ${spot.alpha})`);
+                grad.addColorStop(0.4, `rgba(255, 255, 255, ${spot.alpha * 0.6})`);
+                grad.addColorStop(0.7, `rgba(200, 200, 200, ${spot.alpha * 0.2})`);
+                grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(spot.x, spot.y, radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (radius > 20) {
+                    const glow = ctx.createRadialGradient(
+                        spot.x, spot.y, radius * 0.1,
+                        spot.x, spot.y, radius * 1.8
+                    );
+                    glow.addColorStop(0, `rgba(255, 255, 255, ${spot.alpha * 0.08})`);
+                    glow.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = glow;
+                    ctx.beginPath();
+                    ctx.arc(spot.x, spot.y, radius * 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+    </script>
+</body>
+</html>
