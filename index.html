@@ -22,6 +22,7 @@
             scroll-snap-type: y mandatory;
             font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             scroll-behavior: smooth;
+            font-weight: 400;
         }
         canvas {
             position: fixed;
@@ -72,13 +73,13 @@
         .portfolio-text {
             color: white;
             font-size: clamp(3rem, 12vw, 8rem);
-            font-weight: 300;
             letter-spacing: 0.15em;
             text-transform: uppercase;
             pointer-events: none;
             opacity: 0;
             filter: blur(16px);
             transform: scale(0.96);
+            font-weight: 400;
         }
         .portfolio-text.visible {
             animation: fadeBlurIn 1.1s ease forwards;
@@ -86,7 +87,6 @@
         .fade-text {
             color: white;
             font-size: clamp(1.5rem, 4vw, 3rem);
-            font-weight: 300;
             letter-spacing: 0.05em;
             text-align: center;
             max-width: 800px;
@@ -94,6 +94,7 @@
             opacity: 0;
             filter: blur(16px);
             transform: scale(0.96);
+            font-weight: 400;
         }
         .fade-text.visible {
             animation: fadeBlurIn 1.1s ease forwards;
@@ -145,10 +146,10 @@
         .case-square .label {
             color: rgba(255, 255, 255, 0.8);
             font-size: clamp(1rem, 1.4vw, 1.8rem);
-            font-weight: 300;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             pointer-events: none;
+            font-weight: 400;
         }
         .contacts-list {
             display: flex;
@@ -160,13 +161,13 @@
         .contact-item {
             color: rgba(255, 255, 255, 0.7);
             font-size: clamp(1.2rem, 2.5vw, 2.2rem);
-            font-weight: 300;
             letter-spacing: 0.05em;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             padding-bottom: 0.5rem;
             min-width: 200px;
             text-align: center;
             pointer-events: none;
+            font-weight: 400;
         }
         ::-webkit-scrollbar {
             width: 4px;
@@ -182,12 +183,13 @@
 
         @media (max-width: 600px) {
             .section-split {
-                padding: 1rem;
+                padding: 1rem 1rem 2rem 1rem;
                 justify-content: center;
             }
             .section-split .top {
                 flex: 0 0 auto;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1.5rem;
+                min-height: 20vh;
             }
             .section-split .bottom {
                 flex: 1 1 auto;
