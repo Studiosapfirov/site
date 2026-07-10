@@ -179,15 +179,45 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.3);
         }
+
+        /* Мобильная версия */
         @media (max-width: 600px) {
+            .section-split {
+                padding: 1rem;
+                justify-content: center;
+            }
+            .section-split .top {
+                flex: 0 0 auto;
+                margin-bottom: 1rem;
+            }
             .section-split .bottom {
+                flex: 1 1 auto;
+                flex-direction: column;
                 gap: 1.5rem;
+                justify-content: center;
+                width: 100%;
+                max-width: 80%;
             }
             .case-square {
-                width: 80px;
+                width: 70vw;
+                max-width: 300px;
+                aspect-ratio: 1 / 1;
+            }
+            .case-square .label {
+                font-size: clamp(1.2rem, 5vw, 2rem);
             }
             .section {
                 padding: 1rem;
+            }
+            .fade-text {
+                font-size: clamp(1.2rem, 5vw, 2rem);
+            }
+            .portfolio-text {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+            }
+            .contact-item {
+                font-size: clamp(1rem, 4vw, 1.6rem);
+                min-width: 150px;
             }
         }
     </style>
