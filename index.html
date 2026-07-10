@@ -3,43 +3,114 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfolio</title>
+    <title>Portfolio</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
+        html,
         body {
-            background: black;
-            overflow: hidden;
             height: 100vh;
+            background: black;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
             font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            scroll-behavior: smooth;
         }
         canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
             display: block;
             width: 100vw;
             height: 100vh;
+            pointer-events: none;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+        .section {
+            height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .section-split {
+            justify-content: space-around;
+            padding: 2rem;
+        }
+        .section-split .top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            width: 100%;
+        }
+        .section-split .bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1.2;
+            width: 100%;
+            gap: 3rem;
+            flex-wrap: wrap;
         }
         .portfolio-text {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             color: white;
             font-size: clamp(3rem, 12vw, 8rem);
             font-weight: 300;
             letter-spacing: 0.15em;
             text-transform: uppercase;
             pointer-events: none;
-            user-select: none;
-            animation: fadeBlurIn 2.2s ease forwards;
+            opacity: 0;
+            filter: blur(16px);
+            transform: scale(0.96);
+        }
+        .portfolio-text.visible {
+            animation: fadeBlurIn 1.1s ease forwards;
+        }
+        .fade-text {
+            color: white;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            text-align: center;
+            max-width: 800px;
+            pointer-events: none;
+            opacity: 0;
+            filter: blur(16px);
+            transform: scale(0.96);
+        }
+        .fade-text.visible {
+            animation: fadeBlurIn 1.1s ease forwards;
+        }
+        .fade-item {
+            opacity: 0;
+            filter: blur(16px);
+            transform: scale(0.96);
+        }
+        .fade-item.visible {
+            animation: fadeBlurIn 1.1s ease forwards;
         }
         @keyframes fadeBlurIn {
             0% {
                 opacity: 0;
                 filter: blur(16px);
-                transform: translate(-50%, -50%) scale(0.96);
+                transform: scale(0.96);
             }
             60% {
                 opacity: 0.8;
@@ -48,14 +119,116 @@
             100% {
                 opacity: 1;
                 filter: blur(0);
-                transform: translate(-50%, -50%) scale(1);
+                transform: scale(1);
+            }
+        }
+        .case-square {
+            width: clamp(100px, 15vw, 180px);
+            aspect-ratio: 1 / 1;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            pointer-events: auto;
+        }
+        .case-square:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.12);
+        }
+        .case-square .label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: clamp(1rem, 1.4vw, 1.8rem);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .contact-item {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: clamp(1.2rem, 2.5vw, 2.2rem);
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 0.5rem;
+            min-width: 200px;
+            text-align: center;
+            pointer-events: none;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        @media (max-width: 600px) {
+            .section-split .bottom {
+                gap: 1.5rem;
+            }
+            .case-square {
+                width: 80px;
+            }
+            .section {
+                padding: 1rem;
             }
         }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div class="portfolio-text">portfolio</div>
+
+    <div class="content">
+        <section class="section" id="section1">
+            <div class="portfolio-text" id="text1">portfolio</div>
+        </section>
+
+        <section class="section" id="section2">
+            <div class="fade-text" id="text2">I build analytical models to uncover hidden patterns in unstructured data</div>
+        </section>
+
+        <section class="section section-split" id="section3">
+            <div class="top">
+                <div class="fade-text" id="text3" style="max-width:600px;">View cases</div>
+            </div>
+            <div class="bottom" id="casesContainer">
+                <div class="case-square fade-item">
+                    <span class="label">basic</span>
+                </div>
+                <div class="case-square fade-item">
+                    <span class="label">advanced</span>
+                </div>
+                <div class="case-square fade-item">
+                    <span class="label">flagship</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section4">
+            <div class="fade-text" id="text4" style="max-width:600px;">my contacts:</div>
+            <div class="contacts-list" id="contactsContainer">
+                <div class="contact-item fade-item">@example (telegram)</div>
+                <div class="contact-item fade-item">example@gmail.com</div>
+            </div>
+        </section>
+    </div>
 
     <script>
         const canvas = document.getElementById('canvas');
@@ -164,6 +337,54 @@
 
         resize();
         draw();
+
+        const text1 = document.getElementById('text1');
+        const text2 = document.getElementById('text2');
+        const text3 = document.getElementById('text3');
+        const text4 = document.getElementById('text4');
+
+        const observerText = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                } else {
+                    entry.target.classList.remove('visible');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        observerText.observe(text1);
+        observerText.observe(text2);
+        observerText.observe(text3);
+        observerText.observe(text4);
+
+        const casesContainer = document.getElementById('casesContainer');
+        const observerCases = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const items = entry.target.querySelectorAll('.fade-item');
+                if (entry.isIntersecting) {
+                    items.forEach(el => el.classList.add('visible'));
+                } else {
+                    items.forEach(el => el.classList.remove('visible'));
+                }
+            });
+        }, { threshold: 0.3 });
+
+        observerCases.observe(casesContainer);
+
+        const contactsContainer = document.getElementById('contactsContainer');
+        const observerContacts = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const items = entry.target.querySelectorAll('.fade-item');
+                if (entry.isIntersecting) {
+                    items.forEach(el => el.classList.add('visible'));
+                } else {
+                    items.forEach(el => el.classList.remove('visible'));
+                }
+            });
+        }, { threshold: 0.3 });
+
+        observerContacts.observe(contactsContainer);
     </script>
 </body>
 </html>
