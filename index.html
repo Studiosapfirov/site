@@ -180,7 +180,6 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Мобильная версия */
         @media (max-width: 600px) {
             .section-split {
                 padding: 1rem;
@@ -188,23 +187,25 @@
             }
             .section-split .top {
                 flex: 0 0 auto;
-                margin-bottom: 1rem;
+                margin-bottom: 0.5rem;
             }
             .section-split .bottom {
                 flex: 1 1 auto;
                 flex-direction: column;
-                gap: 1.5rem;
+                gap: 1.2rem;
                 justify-content: center;
                 width: 100%;
                 max-width: 80%;
             }
             .case-square {
-                width: 70vw;
-                max-width: 300px;
+                width: 25vw;
+                max-width: 120px;
                 aspect-ratio: 1 / 1;
+                padding: 0.5rem;
+                border-radius: 14px;
             }
             .case-square .label {
-                font-size: clamp(1.2rem, 5vw, 2rem);
+                font-size: clamp(0.8rem, 3vw, 1.2rem);
             }
             .section {
                 padding: 1rem;
